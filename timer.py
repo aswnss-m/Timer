@@ -1,27 +1,25 @@
 import time
 from tkinter import *
-from tkinter import StringVar
+from tkinter import StringVar #this is to change the timer label for each second using variable string
 class clock:
 	def __init__(self,value):
 		self.value = value
 		main = Tk()
 		main.geometry('300x300')
 		main.title("Timer")
-		self.currenttime = time.localtime()
-		self.currenthour=self.currenttime.tm_hour
-		self.currentmin = self.currenttime.tm_min
-		self.target = {"H":0,"M":0,"S":0} 
+		self.target_time = {"H":0,"M":0,"S":0} 
 		self.countdownlabeltext = StringVar()
-		self.countdownlabeltext.set("{}:{}:{}".format(self.target['H'],self.target['M'],self.target['S']))
-		self.countdownlabel = Label(main,textvariable = self.countdownlabeltext ,font=("Ubuntu Bold",30))
+		self.countdownlabeltext.set("{}:{}:{}".format(self.target_time['H'],self.target_time['M'],self.target_time['S']))
+		print(self.countdownlabeltext.get())
+		self.countdownlabel = Label(main,text = self.countdownlabeltext.get() ,font=("Ubuntu Bold",30))
 		self.thourslabel = Label(main,text="Hour : ")
 		self.tminslabel = Label(main,text="Min : ")
 		self.tsecslabel = Label(main,text="Sec : ")
 
 		setbut = Button(main,text= "set", command = self.setvalue)
-		startbut = Button(main,text="start")
-		pausebut=Button(main, text= "sart")#,command = self.)
-		stopbut=Button(main, text= "sart")#,command = self.)
+		startbut = Button(main,text="start",command = self.start)
+		pausebut=Button(main, text= "pause")#,command = self.)
+		stopbut=Button(main, text= "stop")#,command = self.)
 
 
 		self.thourentry= Entry(main)
@@ -43,62 +41,74 @@ class clock:
 		pausebut.grid(row =5 , column = 1, sticky = E + W)
 		stopbut.grid(row =5 , column = 2, sticky = E + W)
 
-
+		
 		main.mainloop()
 
 
 	def get(self):
-		# self.target['H'] = self.thourentry.get()
-		# self.target['M'] = self.tminentry.get()
-		# self.target['S'] = self.tsecentry.get()
 		try:
-			self.target['H'] = int(self.thourentry.get())
-			if self.target['H'] == "":
-				self.target['H'] == 0
+			self.target_time['H'] = int(self.thourentry.get())
+			if self.target_time['H'] == "":
+				self.target_time['H'] == 0
 		except ValueError:
-			self.target['H'] = 0
+			self.target_time['H'] = 0
 			self.thourentry.delete(0)
 			self.thourentry.insert(0,"Please enter a number")
 		try:
-			self.target['M'] = int(self.tminentry.get())
-			if self.target['M'] == "":
-				self.target['M'] == 0
+			self.target_time['M'] = int(self.tminentry.get())
+			if self.target_time['M'] == "":
+				self.target_time['M'] == 0
 		except ValueError:
-			self.target['M'] = 0
+			self.target_time['M'] = 0
 			self.tminentry.delete(0)
 			self.tminentry.insert(0,"Please enter a number")
 		try:
-			self.target['S'] = int(self.tsecentry.get())
-			if self.target['S'] == "":
-				self.target['S'] == 0
+			self.target_time['S'] = int(self.tsecentry.get())
+			if self.target_time['S'] == "":
+				self.target_time['S'] == 0
 		except ValueError:
-			self.target['S'] = 0
+			self.target_time['S'] = 0
 			self.tsecentry.delete(0)
 			self.tsecentry.insert(0,"Please enter a number")
 
 		
 	def setvalue(self):
 		self.get() 
-		self.countdownlabeltext.set("{}:{}:{}".format(self.target['H'],self.target['M'],self.target['S']))
+		self.countdownlabeltext.set("{}:{}:{}".format(self.target_time['H'],self.target_time['M'],self.target_time['S']))
+		self.countdownlabel.configure(text=self.countdownlabeltext.get())
+		print(self.countdownlabeltext.get())
+	
 	def start(self):
-		self.get()
-		mincount =0
-		hourcount = 0
-		seccount = 0
-		while self.target['S'] >= 0:
-			self.target['S'] -= 1
-			seccount += 1
+		totalseconds = (self.target_time['H']*3600) + (self.target_time['M']*60) + self.target_time['S']
+		while True:
+			print("test")
+			totalseconds -= 1
+			# seccount += 1
+			self.target_time['S'] = totalseconds % 60 
+			self.target_time['M'] = int(totalseconds / 60)
+
+			if self.target_time['M'] >=60:
+
+				self.target_time['H'] = int(totalseconds/3600)
+				self.target_time['M'] = (int(totalseconds /60))%60
+
+			if totalseconds == 0:
+				break
+				
+			self.update()
 			time.sleep(1)
-			if seccount == 60 and self.target['M'] >= 0 :
-				self.target['M'] -= 1 
-				mincount += 1
-				seccount = 0
-			if mincount ==60 and self.target['H'] >= 0:
-				self.target['H'] -= 1
-				hourcount += 1
-				mincount = 0
 
+	def update(self):	
+		print("inside update")
+		h = self.target_time['H']
+		m = self.target_time['M']
+		s = self.target_time['S']
+		
+		self.countdownlabeltext.set("{}:{}:{}".format(h,m,s))
 
+		print(self.countdownlabeltext.get())
+		
+		self.countdownlabel.configure(text=self.countdownlabeltext.get())
 
 
 
