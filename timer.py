@@ -1,6 +1,7 @@
 import time
 from tkinter import *
 from tkinter import StringVar #this is to change the timer label for each second using variable string
+from playsound import playsound
 class clock:
 	def __init__(self,value):
 		self.value = value
@@ -90,6 +91,7 @@ class clock:
 				self.target_time['M'] = (int(totalseconds /60))%60
 
 			if totalseconds == 0:
+				playsound("Popular Alarm Clock Sound Effect.mp3")
 				break
 
 			self.update()
@@ -105,6 +107,7 @@ class clock:
 		
 		self.countdownlabel.configure(text=self.countdownlabeltext.get())
 		self.main.update()
+
 
 
 
