@@ -18,7 +18,7 @@ class clock:
 
 		setbut = Button(self.main,text= "set", command = self.setvalue)
 		startbut = Button(self.main,text="start",command = self.start)
-		pausebut=Button(self.main, text= "pause")#,command = self.)
+		pausebut=Button(self.main, text= "pause",command = self.pause)
 		stopbut=Button(self.main, text= "stop")#,command = self.)
 
 
@@ -78,19 +78,19 @@ class clock:
 		self.countdownlabel.configure(text=self.countdownlabeltext.get())
 	
 	def start(self):
-		totalseconds = (self.target_time['H']*3600) + (self.target_time['M']*60) + self.target_time['S']
+		self.currentseconds = (self.target_time['H']*3600) + (self.target_time['M']*60) + self.target_time['S']
 		while True:
-			totalseconds -= 1
+			self.currentseconds -= 1
 			# seccount += 1
-			self.target_time['S'] = totalseconds % 60 
-			self.target_time['M'] = int(totalseconds / 60)
+			self.target_time['S'] = self.currentseconds % 60 
+			self.target_time['M'] = int(self.currentseconds / 60)
 
 			if self.target_time['M'] >=60:
 
-				self.target_time['H'] = int(totalseconds/3600)
-				self.target_time['M'] = (int(totalseconds /60))%60
+				self.target_time['H'] = int(self.currentseconds/3600)
+				self.target_time['M'] = (int(self.currentseconds /60))%60
 
-			if totalseconds == 0:
+			if self.currentseconds == 0:
 				playsound("Popular Alarm Clock Sound Effect.mp3")
 				break
 
@@ -107,7 +107,10 @@ class clock:
 		
 		self.countdownlabel.configure(text=self.countdownlabeltext.get())
 		self.main.update()
-
+	def pause(self):
+		temp = self.currentseconds
+		self.update()
+		self.main.update()
 
 
 
