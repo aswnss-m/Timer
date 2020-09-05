@@ -2,9 +2,9 @@ import time
 from tkinter import *
 from tkinter import StringVar #this is to change the timer label for each second using variable string
 from playsound import playsound
+from pygame import mixer as mx
 class clock:
-	def __init__(self,value):
-		self.value = value
+	def __init__(self):
 		self.main = Tk()
 		self.main.geometry('300x300')
 		self.main.title("Timer")
@@ -18,28 +18,28 @@ class clock:
 
 		setbut = Button(self.main,text= "set", command = self.setvalue)
 		startbut = Button(self.main,text="start",command = self.start)
-		pausebut=Button(self.main, text= "pause",command = self.pause)
-		stopbut=Button(self.main, text= "stop")#,command = self.)
+		# pausebut=Button(self.main, text= "pause",command = self.pause)
+		resetbut=Button(self.main, text= "reset",command = self.reset)
 
 
 		self.thourentry= Entry(self.main)
 		self.tminentry= Entry(self.main)
 		self.tsecentry= Entry(self.main)
 
-		self.countdownlabel.grid(row=0,column=0,columnspan=3,sticky=E+W)
+		self.countdownlabel.grid(row=0,rowspan =2 ,column=0,columnspan=4,sticky=E+W)
 
-		self.thourslabel.grid(row=1,column=0,sticky=E)
-		self.thourentry.grid(row=1,column=1,columnspan = 2,sticky=E)
-		self.tminslabel.grid(row=2,column=0,sticky=E)
-		self.tminentry.grid(row=2,column=1,columnspan = 2,sticky=E)
-		self.tsecslabel.grid(row=3,column=0,sticky=E)
-		self.tsecentry.grid(row=3,column=1,columnspan = 2,sticky=E)
+		self.thourslabel.grid(row=2,column=0,sticky=E)
+		self.thourentry.grid(row=2,column=1,columnspan = 3,sticky=E)
+		self.tminslabel.grid(row=3,column=0,sticky=E)
+		self.tminentry.grid(row=3,column=1,columnspan = 3,sticky=E)
+		self.tsecslabel.grid(row=4,column=0,sticky=E)
+		self.tsecentry.grid(row=4,column=1,columnspan = 3,sticky=E)
 
 
-		startbut.grid(row =5,column = 0 , sticky = E + W)
-		setbut.grid(row=4,column=0,columnspan=3,sticky=E+W)
-		pausebut.grid(row =5 , column = 1, sticky = E + W)
-		stopbut.grid(row =5 , column = 2, sticky = E + W)
+		setbut.grid(row=5,column=0,columnspan=4,sticky=E+W)
+		startbut.grid(row =6,column = 0 ,columnspan=2, sticky = E + W)
+		# pausebut.grid(row =5 , column = 1, sticky = E + W)
+		resetbut.grid(row =6 ,column = 2,columnspan=2,sticky = E + W)
 
 		
 		self.main.mainloop()
@@ -91,7 +91,7 @@ class clock:
 				self.target_time['M'] = (int(self.currentseconds /60))%60
 
 			if self.currentseconds == 0:
-				playsound("Popular Alarm Clock Sound Effect.mp3")
+				self.timesup()
 				break
 
 			self.update()
@@ -109,12 +109,49 @@ class clock:
 		self.main.update()
 	def pause(self):
 		temp = self.currentseconds
+		self.target_time['S'] = temp % 60 
+		self.target_time['M'] = int(temp / 60)
+		if self.target_time['M'] >=60:
+			self.target_time['H'] = int(temp/3600)
+			self.target_time['M'] = (int(temp /60))%60
 		self.update()
-		self.main.update()
+
+
+	def reset(self):
+		try:
+			self.timesupwindow.destroy()
+			mx.music.stop()
+		except:
+			pass
+		self.main.destroy()
+		self.__init__()
+
+
+	def timesup(self):
+		mx.init()
+		mx.music.load("Popular Alarm Clock Sound Effect.mp3")
+		mx.music.play()
+		self.timesupwindow = Tk()
+		self.timesupwindow.title("Time is up")
+		timesuplabel = Label(self.timesupwindow , text = "Time is up!!",font = ("Ariel Bold",40))
+		timesuplabel.pack()
+
+		timesupbut1 = Button(self.timesupwindow, text="Again" , command = self.reset)
+		timesupbut2 = Button(self.timesupwindow, text="Exit" , command = self.exit)
+
+		timesupbut1.pack()
+		timesupbut2.pack()
+		self.timesupwindow.mainloop()
+	def exit(self):
+		self.timesupwindow.destroy()
+		self.main.quit()
+		mx.music.stop()
 
 
 
 
 
 
-clock(20)
+
+
+clock()
